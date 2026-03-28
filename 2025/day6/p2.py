@@ -1,30 +1,5 @@
 import math
 
-def split_vals(s):
-    return list(filter(None, s.split(" ")))
-
-def form_numbers(vals):
-    # vals is [123, 45, 6]
-    max_len = 0
-    for v in vals:
-        max_len = max(max_len, len(v))
-        
-    for i, v in enumerate(vals):
-        vals[i] = "#" * (max_len - len(v)) + vals[i]
-        
-    res = ["" for _ in range(len(vals))]
-    idx = 0
-    for i in range(max_len - 1, -1, -1):
-        for v in vals:
-            if v[i] == "#":
-                continue
-            res[idx] += v[i]
-        idx += 1
-    for i in range(len(res)):
-        res[i] = int(res[i])
-    print(res)
-    return res
-
 def perform_math(vals, operation):
     if operation == "+":
         idx = 0
@@ -37,39 +12,44 @@ def perform_math(vals, operation):
 
 num_columns = []
 operations = []
+ops_idx = set()
 
-
-space = 0
 with open("input.txt", "r") as file:
     lines = file.read().splitlines()
-    for i in range(len(lines[0])):
-        for j in range(len(lines)):
-            if lines[j][i] != " ":
-                break
-        else:
-            space = i
-            break
-
-    for i in range(len(lines)):
-        for j in range(len(lines[0])):
-            if j % 4 == 3:
-                continue
+    for i, c in enumerate(lines[-1]):
+        if c != " ":
+            operations.append(c)
+            ops_idx.add(i - 1)
     
-print(space_idxs)
+    for i in range(len(lines) - 1):
+        s = ""
+        nums = []
+        for j in range(len(lines[0])):
+            if j in ops_idx:  # TODO:verify logic
+                nums.append(s)
+                s = ""
+                continue
+                
+            if lines[i][j] == " ":
+                s += "#"
+            else:
+                s += lines[i][j]
+        nums.append(s)
+        num_columns.append(nums)
 
-# with open("input.txt", "r") as file:
-#     lines = file.read().splitlines()
-#     num_columns = [[] for _ in range(len(split_vals(lines[0])))]
-#     i = 0
-#     while lines[i][0] not in ["*", "+"]:
-#         vals = split_vals(lines[i])
-        
-#         for j in range(len(vals)):
-#             num_columns[j].append(vals[j])
-#         i += 1
-#     operations = split_vals(lines[i])
+res = 0
 
-# total = 0
-# for i in range(len(operations)):
-#     total += perform_math(form_numbers(num_columns[i]), operations[i])
-# print(total)
+for i in range(len(num_columns[0])):
+    vals = ["" for i in range(len(num_columns[0][i]))]
+    for j in range(len(num_columns)):
+        for k in range(len(num_columns[j][i])):
+            if num_columns[j][i][k] == "#":
+                continue
+            vals[k] += num_columns[j][i][k]
+
+    for k in range(len(vals)):
+        if vals[k] == "":
+            vals[k] = 0
+        vals[k] = int(vals[k])
+    res += perform_math(vals, operations[i])
+print(res)
