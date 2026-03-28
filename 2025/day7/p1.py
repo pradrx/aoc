@@ -2,9 +2,6 @@ from collections import deque
 
 from utils.read_str_grid import read_str_grid
 
-def at_end(beam):
-    return 
-
 grid = read_str_grid()
 splits = set()
 queue = deque()
