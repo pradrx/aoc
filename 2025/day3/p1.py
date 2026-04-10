@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-f = open("input", "r")
+f = open("input.txt", "r")
 
 total = 0
 
